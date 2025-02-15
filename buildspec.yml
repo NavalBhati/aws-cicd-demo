@@ -1,0 +1,19 @@
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      python: 3.8
+    commands:
+      - echo "Installing dependencies..."
+      - pip install -r requirements.txt
+  build:
+    commands:
+      - echo "Building the application..."
+  post_build:
+    commands:
+      - echo "Uploading to S3..."
+      - aws s3 cp appspec.yml s3://myapp-bucket/
+      - aws deploy create-deployment --application-name MyApp --deployment-group-name MyDeploymentGroup --s3-location bucket=myapp-bucket,key=appspec.yml,bundleType=yml
+artifacts:
+  files:
+    - '**/*'
